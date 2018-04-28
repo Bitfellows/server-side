@@ -1,0 +1,26 @@
+{
+  "name": "server-side",
+  "version": "1.0.0",
+  "description": "server-side code for bitfellows",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bitfellows/server-side.git"
+  },
+  "author": "James, Madhu, Lina, Michael, Tama",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bitfellows/server-side/issues"
+  },
+  "homepage": "https://github.com/Bitfellows/server-side#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "pg": "^7.4.1"
+  }
+}
