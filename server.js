@@ -25,16 +25,32 @@ const MARKET_DATA_API_URL = 'https://api.cryptonator.com/api/full'
 
 // API Endpoints
 app.get('/api/v1/coins/:name', (req, res) => {
-    superagent.get(`${MARKET_DATA_API_URL}/${req.params.name}-usd`)
+  superagent.get(`${MARKET_DATA_API_URL}/${req.params.name}-usd`)
     .then(results => {
-        var coinMarketData = JSON.parse(results.text);
-           res.send(coinMarketData.ticker.markets);       
+      var coinMarketData = JSON.parse(results.text);
+      res.send(coinMarketData.ticker.markets);       
     });
 });
 
 app.get('/test',(req,res) => {
-    res.send("Hello Bitfellows");
-})
+  res.send('Hello Bitfellows');
+});
 
+app.post('/login', (req, res) => {
+  client.query(
+    `INSERT INTO users(user_name, "fName", "lName")
+    VALUES($1, $2)
+    ON CONFLICT DO NOTHING;`,
+    [
+      req.body.user_name,
+      req.body.fName,
+      req.body.lName,
+    ]
+  ).then(() => {
+    res.send('User info added to DB');
+  })
+    .catch(err => {
+      console.error(err);
+    });
+});
 app.listen(PORT,() => console.log(`Listening on PORT: ${PORT}`));
-
