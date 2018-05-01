@@ -27,9 +27,13 @@ const MARKET_DATA_API_URL = 'https://api.cryptonator.com/api/full'
 app.get('/api/v1/coins/:name', (req, res) => {
     superagent.get(`${MARKET_DATA_API_URL}/${req.params.name}-usd`)
     .then(results => {
-        var coinMarketData = JSON.parse(results.text);
-           res.send(coinMarketData.ticker.markets);       
-    });
+        var coinMarketFullData = (JSON.parse(results.text));
+        var coinMarketData = coinMarketFullData.ticker.markets;
+        var changeFromLastHour = coinMarketFullData.ticker.change;
+        coinMarketData.map(obj=>obj.change = changeFromLastHour);
+        console.log(coinMarketData);
+           res.send(coinMarketData);       
+    }).catch(console.error);
 });
 
 app.get('/test',(req,res) => {
