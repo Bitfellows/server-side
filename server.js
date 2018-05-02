@@ -21,7 +21,8 @@ app.use(express.json());
 app.use(cors());
 
 //API URL's
-const MARKET_DATA_API_URL = 'https://api.cryptonator.com/api/full'
+const MARKET_DATA_API_URL = 'https://api.cryptonator.com/api/full';
+const CHART_DATA_API_URL = 'https://api.coinmarketcap.com/v1/ticker';
 
 // API Endpoints
 app.get('/api/v1/coins/:name', (req, res) => {
@@ -33,6 +34,17 @@ app.get('/api/v1/coins/:name', (req, res) => {
         coinMarketData.map(obj=>obj.change = changeFromLastHour);
         console.log(coinMarketData);
            res.send(coinMarketData);       
+    }).catch(console.error);
+});
+app.get('/api/v1/ticker', (req, res) => {
+    superagent.get(`${CHART_DATA_API_URL}`)
+    .then(results => {
+        var chartMarketFullData = (JSON.parse(results.text));
+        // var coinMarketData = coinMarketFullData.ticker.markets;
+        // var changeFromLastHour = coinMarketFullData.ticker.change;
+        // coinMarketData.map(obj=>obj.change = changeFromLastHour);
+        console.log(chartMarketFullData);
+           res.send(chartMarketFullData);       
     }).catch(console.error);
 });
 
