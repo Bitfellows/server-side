@@ -33,24 +33,28 @@ app.get('/api/v1/coins/:name', (req, res) => {
 });
 
 app.get('/test',(req,res) => {
+  console.log('testing');
   res.send('Hello Bitfellows');
 });
 
-app.post('/login', (req, res) => {
+app.post('/newUser', (req, res) => {
+  console.log(req.body);
+
   client.query(
-    `INSERT INTO users(user_name, "fName", "lName")
-    VALUES($1, $2)
+    `INSERT INTO users(user_name, fname, lname, email)
+    VALUES($1, $2, $3, $4)
     ON CONFLICT DO NOTHING;`,
-    [
-      req.body.user_name,
-      req.body.fName,
-      req.body.lName,
-    ]
-  ).then(() => {
-    res.send('User info added to DB');
-  })
+    [req.body.user_name,
+      req.body.fname,
+      req.body.lname,
+      req.body.email
+    ])
     .catch(err => {
       console.error(err);
+    })
+    .then(() => {
+      res.send('User info added to DB');
     });
+
 });
 app.listen(PORT,() => console.log(`Listening on PORT: ${PORT}`));
