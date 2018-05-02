@@ -47,7 +47,44 @@ app.get('/api/v1/ticker', (req, res) => {
            res.send(chartMarketFullData);       
     }).catch(console.error);
 });
-
+app.post('/bitfellows', (req, res) => {  
+    console.log('test');
+      client.query(
+        `SELECT user_id FROM users WHERE user_name=$1`,
+        [req.body.user_name],
+        function(err, result) {
+          if (err) console.error(err)
+          queryTwo(result.rows[0].user_id)
+        }
+      )
+  
+    function queryTwo(user_id) {
+      client.query(
+        `INSERT INTO
+        activity(user_id, coin, qty)
+        VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;`,
+        [
+          user_id,
+          req.body.coin,
+          req.body.qty
+          ],
+        function(err) {
+          if (err) console.error(err);
+          res.send('insert complete');
+        }
+      );
+    }
+  });
+  app.get('/mybit', (req, res) => {
+      console.log('test');
+    client.query(`
+    SELECT activity_id,user_name,coin,qty FROM activity
+    INNER JOIN users
+      ON activity.user_id=users.user_id;`
+    )
+    .then(result => res.send(result.rows))
+    .catch(console.error);
+  });
 app.get('/test',(req,res) => {
     res.send("Hello Bitfellows");
 })
