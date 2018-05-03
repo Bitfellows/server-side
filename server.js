@@ -19,13 +19,18 @@ client.on('error', err => console.error(err));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(cors());
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
 //API URL's
 const MARKET_DATA_API_URL = 'https://api.cryptonator.com/api/full';
 const CHART_DATA_API_URL = 'https://api.coinmarketcap.com/v1/ticker';
 
 // API Endpoints
-app.get('/api/v1/coins/:name', (req, res) => {
+app.get('/api/v1/coins/:name', (req, res, next) => {
   superagent.get(`${MARKET_DATA_API_URL}/${req.params.name}-usd`)
     .then(results => {
         var coinMarketFullData = (JSON.parse(results.text));
@@ -36,7 +41,7 @@ app.get('/api/v1/coins/:name', (req, res) => {
            res.send(coinMarketData);       
     }).catch(console.error);
 });
-app.get('/api/v1/ticker', (req, res) => {
+app.get('/api/v1/ticker', (req, res, next) => {
     superagent.get(`${CHART_DATA_API_URL}`)
     .then(results => {
         var chartMarketFullData = (JSON.parse(results.text));
@@ -47,7 +52,7 @@ app.get('/api/v1/ticker', (req, res) => {
            res.send(chartMarketFullData);       
     }).catch(console.error);
 });
-app.post('/bitfellows', (req, res) => {  
+app.post('/bitfellows', (req, res, next) => {  
     console.log('test');
       client.query(
         `SELECT user_id FROM users WHERE user_name=$1`,
@@ -75,22 +80,22 @@ app.post('/bitfellows', (req, res) => {
       );
     }
   });
-  app.get('/mybit', (req, res) => {
+  app.get('/mybit/:username', (req, res, next) => {
       console.log('test');
     client.query(`
-    SELECT activity_id,user_name,coin,qty FROM activity
-    INNER JOIN users
-      ON activity.user_id=users.user_id;`
+    SELECT coin,qty FROM activity      
+    where activity.user_id=(SELECT user_id FROM users WHERE user_name=$1)`,
+    [req.params.username]
     )
     .then(result => res.send(result.rows))
     .catch(console.error);
   });
-app.get('/test',(req,res) => {
+app.get('/test',(req,res, next) => {
   console.log('testing');
   res.send('Hello Bitfellows');
 });
 
-app.post('/newUser', (req, res) => {
+app.post('/newUser', (req, res, next) => {
   console.log(req.body);
 
   client.query(
