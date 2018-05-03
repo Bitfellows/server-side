@@ -80,12 +80,12 @@ app.post('/bitfellows', (req, res, next) => {
       );
     }
   });
-  app.get('/mybit', (req, res, next) => {
+  app.get('/mybit/:username', (req, res, next) => {
       console.log('test');
     client.query(`
-    SELECT activity_id,user_name,coin,qty FROM activity
-    INNER JOIN users
-      ON activity.user_id=users.user_id;`
+    SELECT coin,qty FROM activity      
+    where activity.user_id=(SELECT user_id FROM users WHERE user_name=$1)`,
+    [req.params.username]
     )
     .then(result => res.send(result.rows))
     .catch(console.error);
