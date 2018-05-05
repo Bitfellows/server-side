@@ -45,10 +45,6 @@ app.get('/api/v1/ticker', (req, res, next) => {
     superagent.get(`${CHART_DATA_API_URL}`)
     .then(results => {
         var chartMarketFullData = (JSON.parse(results.text));
-        // var coinMarketData = coinMarketFullData.ticker.markets;
-        // var changeFromLastHour = coinMarketFullData.ticker.change;
-        // coinMarketData.map(obj=>obj.change = changeFromLastHour);
-        console.log(chartMarketFullData);
            res.send(chartMarketFullData);       
     }).catch(console.error);
 });
@@ -90,6 +86,7 @@ app.post('/bitfellows', (req, res, next) => {
     .then(result => res.send(result.rows))
     .catch(console.error);
   });
+  
 app.get('/test',(req,res, next) => {
   console.log('testing');
   res.send('Hello Bitfellows');
